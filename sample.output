@@ -1,0 +1,71 @@
+Match count: 395
+Is Truncated: True
+Counter({'com': 50})
+Counter({'JP': 19,
+         None: 11,
+         'US': 9,
+         'DE': 7,
+         'FR': 1,
+         'SG': 1,
+         'PL': 1,
+         'GB': 1})
+Domain: xn--lava-yg2hgg58w.com update_date: 2020-07-25T05:43:42.927538
+Domain: xn--lava-tt1hx62b.com update_date: 2020-07-25T05:43:42.927088
+Domain: xn--lava-yq4cv04ow7t.com update_date: 2020-07-25T05:43:42.927689
+Domain: xn--lava-zl4c7e9a3d1e6fm.com update_date: 2020-07-25T05:43:42.927839
+Domain: xn--lava-tx9gy4a22hiqt.com update_date: 2020-07-25T05:43:42.927238
+Domain: xn--lava-zl4cubwgsb0lxbwfz684c.com update_date: 2020-07-25T05:43:42.927988
+Domain: xn--lava-xpa.com update_date: 2020-07-25T05:43:42.927388
+Domain: xn--lava-oh5f2xj27b4f5a0zrwr7e.com update_date: 2020-07-25T05:43:42.926486
+Domain: xn--lava-tc0h43ifv9ac3n.com update_date: 2020-07-25T05:43:42.926637
+Domain: xn--lava-ex4cm80yv69b.com update_date: 2020-07-25T05:43:42.926183
+Domain: xn--lava-to8fv6op2tc8a.com update_date: 2020-07-25T05:43:42.926787
+Domain: xn--lava-ep4c4a7a1746cdrbe15t310c.com update_date: 2020-07-25T05:43:42.926028
+Domain: xn--lava-frszentrum-6kb.com update_date: 2020-07-25T05:43:42.926335
+Domain: xn--lava-tpfe-57a.com update_date: 2020-07-25T05:43:42.926939
+Domain: xn--lava-3m6fu11spovcx6h.com update_date: 2020-07-25T05:43:42.925121
+Domain: xn--lava-806g402s.com update_date: 2020-07-25T05:43:42.925423
+Domain: xn--lava-el2h959ahq4a.com update_date: 2020-07-25T05:43:42.925725
+Domain: xn--lava-4na.com update_date: 2020-07-25T05:43:42.925272
+Domain: xn--lava-el2hl77an96d.com update_date: 2020-07-25T05:43:42.925877
+Domain: xn--lava-8g4ct65o10ybvlr716d.com update_date: 2020-07-25T05:43:42.925574
+Domain: xn--lava-3m6fs1bu67c4m7i.com update_date: 2020-07-25T05:43:42.924817
+Domain: xn--lava-3m6fs1ng29c6h3bwnybmwa.com update_date: 2020-07-25T05:43:42.924968
+Domain: tiles-lava-provence.com update_date: 2020-07-25T03:10:21.540418
+Domain: tile-lava-worktop.com update_date: 2020-07-25T03:10:17.248860
+Domain: the-red-hot-lava-shop.com update_date: 2020-07-25T02:28:49.890237
+Domain: maya-lava-java.com update_date: 2020-07-24T18:28:50.474399
+Domain: location-lava-corse.com update_date: 2020-07-24T17:33:46.351794
+Domain: lava-zentrum.com update_date: 2020-07-24T16:52:33.348952
+Domain: lava-yoga-global.com update_date: 2020-07-24T16:52:33.348491
+Domain: lava-yoga.com update_date: 2020-07-24T16:52:33.348645
+Domain: lava-world.com update_date: 2020-07-24T16:52:33.348174
+Domain: lava-x.com update_date: 2020-07-24T16:52:33.348336
+Domain: lava-yogablog.com update_date: 2020-07-24T16:52:33.348799
+Domain: lava-works.com update_date: 2020-07-24T16:52:33.347656
+Domain: lava-wines.com update_date: 2020-07-24T16:52:33.347482
+Domain: lava-worktops.com update_date: 2020-07-24T16:52:33.347817
+Domain: lava-world-diving.com update_date: 2020-07-24T16:52:33.347975
+Domain: lava-wholesale.com update_date: 2020-07-24T16:52:33.347209
+Domain: lava-water.com update_date: 2020-07-24T16:52:33.346472
+Domain: lava-wash.com update_date: 2020-07-24T16:52:33.346227
+Domain: lava-web.com update_date: 2020-07-24T16:52:33.346719
+Domain: lava-weimar.com update_date: 2020-07-24T16:52:33.346963
+Domain: lava-volcanicarchitecture.com update_date: 2020-07-24T16:52:33.345726
+Domain: lava-wars.com update_date: 2020-07-24T16:52:33.345974
+Domain: lava-vine.com update_date: 2020-07-24T16:52:33.345477
+Domain: lava-vc.com update_date: 2020-07-24T16:52:33.345227
+Domain: lava-unternehmensberatung.com update_date: 2020-07-24T16:52:33.344135
+Domain: lava-va.com update_date: 2020-07-24T16:52:33.344455
+Domain: lava-vacuum-packing.com update_date: 2020-07-24T16:52:33.344722
+Domain: lava-vape.com update_date: 2020-07-24T16:52:33.344976
+{'A': ['49.212.235.39'],
+ 'CNAME': None,
+ 'MX': [{'exchange': 'xn--lava-yg2hgg58w.com', 'priority': 10}],
+ 'NS': ['ns1.dns.ne.jp', 'ns2.dns.ne.jp'],
+ 'TXT': ['v=spf1 a:www3329.sakura.ne.jp mx ~all'],
+ 'country': 'JP',
+ 'create_date': '2020-07-25T05:43:42.927535',
+ 'domain': 'xn--lava-yg2hgg58w.com',
+ 'isDead': 'False',
+ 'update_date': '2020-07-25T05:43:42.927538'}

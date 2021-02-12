@@ -83,7 +83,7 @@ def get_domains(search_domain, zone=None, country=None):
 if __name__ == '__main__':
     
     from collections import Counter
-    response = get_domains('lava', zone='net')
+    response = get_domains('lava', zone='com')
     print("Match count:", response.match_count)
     print("Is Truncated:", response.is_truncated)
     # for domain in response.domains:
@@ -92,7 +92,9 @@ if __name__ == '__main__':
     pprint(Counter(domain.zone for domain in response.domains ))
     pprint(Counter(domain.country for domain in response.domains ))
 
+    for domain in response.domains:
+        print("Domain:", domain.domain, 'update_date:', domain.json_object['update_date'])
+        
     pprint(response.domains[0].json_object)
-
 
 # query country first and then zone (Is Truncated)

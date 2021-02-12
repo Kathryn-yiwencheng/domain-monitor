@@ -25,11 +25,8 @@ migrate = Migrate(app, db)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 
-
-
 class Country(db.Model):
     __tablename__ = 'country'
-
     id = db.Column(db.Integer, primary_key=True)
     country = db.Column(db.String())
 
@@ -46,14 +43,18 @@ class Domans(db.Model):
     zone_id = db.Column(db.Integer, db.ForeignKey('zone.id'), primary_key=True)
     country_id = db.Column(db.Integer, db.ForeignKey('country.id'), primary_key=True)
     domain = db.Column(db.Integer())
+    
+    
     create_date = db.Column(db.DateTime())
     update_date = db.Column(db.DateTime())
     is_dead = db.Column(db.String())
-    a = db.Column(db.String())
-    ns = db.Column(db.String())
-    cname = db.Column(db.String())
-    mx = db.Column(db.String())
-    txt = db.Column(db.String())
+
+
+    # a = db.Column(db.String())
+    # ns = db.Column(db.String())
+    # cname = db.Column(db.String())
+    # mx = db.Column(db.String())
+    # txt = db.Column(db.String())
 
 
 
