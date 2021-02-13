@@ -3,6 +3,8 @@ from pprint import pprint
 import requests
 import urllib.parse
 import re
+import dateutil.parser
+
 
 class DomainRecord(object):
     
@@ -18,6 +20,12 @@ class DomainRecord(object):
     @property
     def country(self):
         return self.json_object['country']
+
+    @property
+    def create_date(self):
+        return dateutil.parser.parse(
+            self.json_object['create_date']
+        )
 
     @property
     def zone(self):
