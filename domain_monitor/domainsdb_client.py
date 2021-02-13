@@ -22,6 +22,10 @@ class DomainRecord(object):
         return self.json_object['country']
 
     @property
+    def is_dead(self):
+        return self.json_object['isDead']
+
+    @property
     def create_date(self):
         return dateutil.parser.parse(
             self.json_object['create_date']

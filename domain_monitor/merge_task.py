@@ -6,13 +6,14 @@ from pprint import pprint
 
 class InMemoryDimension(object):
     
-    def __init__(self, Model, create_func, key_func):
-        self.Model = Model
+    def __init__(self, model, create_func, key_func):
+        self.model = model
         self.create_func = create_func
         self.key_func = key_func
+        self.dict = None
     
     def load(self):
-        self.dict = {self.key_func(m):m for m in self.Model.query.all()}
+        self.dict = {self.key_func(m):m for m in self.model.query.all()}
     
     def ensure_contains(self, key):
         if key not in self.dict and key is not None:
@@ -69,7 +70,8 @@ def load_data():
             print("New registration")
             registration = Registration(
                 domain=domain_model,
-                create_date=domain.create_date
+                create_date=domain.create_date,
+                is_dead=domain.is_dead
             )
             db.session.add(registration)
     
