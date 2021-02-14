@@ -45,6 +45,8 @@ def remove_unseen_domains(stale_threshold=timedelta(hours=12), change_set=None):
         if change_set is not None:
             change_set.removed.append(reg)
 
+    db.session.commit()
+
 def merge_all_data():
     searches = Search.query.all()
     change_set = ChangeSet()
