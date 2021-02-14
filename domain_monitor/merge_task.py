@@ -1,7 +1,7 @@
 from domain_monitor.models import Zone, Country, Domain, Registration, HostedCountry, ResourceRecord, Search
 from domain_monitor.domainsdb_client import get_domains
 from domain_monitor import app, db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import logging
 
@@ -34,6 +34,17 @@ class ChangeSet(object):
         self.removed = []
 
 
+def remove_unseen_domains(stale_threshold=timedelta(hours=12), change_set=None):
+    q = (Registration.query
+        .filter(Registration.last_seen_date < datetime.utcnow() - stale_threshold)
+        .filter(Registration.removed_date.is_(None)))
+    stale = q.all()
+    for reg in stale:
+        logger.info("Stale registration found: %r", reg)
+        reg.removed_date = datetime.utcnow()
+        if change_set is not None:
+            change_set.removed.append(reg)
+
 def merge_all_data():
     searches = Search.query.all()
     change_set = ChangeSet()
@@ -42,6 +53,8 @@ def merge_all_data():
 
         merge_data(False, search.search_string, change_set)
         merge_data(True, search.search_string, change_set)
+
+    remove_unseen_domains(change_set=change_set)
 
     if len(change_set.added) > 0:
         logger.info("Added %d domains", len(change_set.added))
@@ -117,7 +130,7 @@ def load_data(results, change_set=None):
         matching_registrations = [
             reg 
             for reg in domain_model.registrations
-            if reg.create_date == domain.create_date
+            if  reg.create_date == domain.create_date 
         ]
         non_matching_registrations = [
             reg 
