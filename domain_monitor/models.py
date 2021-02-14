@@ -10,6 +10,14 @@ from sqlalchemy import Integer, Enum
 from flask_sqlalchemy import SQLAlchemy
 from domain_monitor import app, db
 
+
+class Search(db.Model):
+    __tablename__ = 'search'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    search_string = db.Column(db.String())
+
+
 class Zone(db.Model):
     __tablename__ = 'zone'
 
@@ -17,6 +25,7 @@ class Zone(db.Model):
     zone = db.Column(db.String())
 
     domains = db.relationship('Domain', backref='zone')
+
 
 class Domain(db.Model):
     __tablename__ = 'domain'
@@ -41,7 +50,7 @@ class Registration(db.Model):
     end_date = db.Column(db.DateTime())
 
     hosted_countries = db.relationship("HostedCountry", backref='registration')
-    resource_record = db.relationship("ResourceRecordType", backref='registration')
+    resource_records = db.relationship("ResourceRecord", backref='registration')
 
 
 class HostedCountry(db.Model):

@@ -27,9 +27,12 @@ class DomainRecord(object):
 
     @property
     def create_date(self):
-        return dateutil.parser.parse(
-            self.json_object['create_date']
-        )
+        if self.json_object['create_date'] is None:
+            return None
+        else:
+            return dateutil.parser.parse(
+                self.json_object['create_date']
+            )
 
     @property
     def zone(self):
@@ -47,17 +50,20 @@ class DomainsdbResponse(object):
     
     @property
     def match_count(self):
-        return self.json_object['total']
+        return self.json_object.get('total', 0)
     
     @property
     def domains(self):
-        return list(map(DomainRecord, self.json_object['domains']))
+        return list(
+               map(DomainRecord, self.json_object.get('domains', [])
+            )
+        )
 
     @property
     def is_truncated(self):
         return self.match_count != len(self.domains)
 
-def get_domains(search_domain, zone=None, country=None):
+def get_domains(search_domain, zone=None, country=None, is_dead=False):
 
     # Begin with base URL
     base_url = 'https://api.domainsdb.info/v1/domains/search'
@@ -67,7 +73,8 @@ def get_domains(search_domain, zone=None, country=None):
     query_string_parts = {
         'domain': search_domain,
         'zone': zone,
-        'country': country
+        'country': country,
+        'isDead': is_dead
     }
 
     query_string_parts = {

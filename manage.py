@@ -5,19 +5,23 @@ from domain_monitor import app, db, migrate
 from flask_migrate import Migrate, MigrateCommand
 
 
-
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-@manager.command
-def hello():
-    print("hello")
 
 @manager.command
-def build_tables():
-    from domain_monitor.merge_task import load_data
-    load_data()
+def run_merge_task():
+    from domain_monitor.merge_task import merge_all_data
+    import logging
+    logging.basicConfig(level=logging.INFO, filename="task.log")
+    merge_all_data()
 
+
+@manager.command
+def load_search_string(search_string):
+    from domain_monitor.models import Search
+    db.session.add(Search(search_string=search_string))
+    db.session.commit()
 
 if __name__ == "__main__":
     manager.run()

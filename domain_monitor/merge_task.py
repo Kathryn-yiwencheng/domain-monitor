@@ -1,6 +1,10 @@
-from domain_monitor.models import Zone, Country, Domain, Registration, HostedCountry, ResourceRecord
+from domain_monitor.models import Zone, Country, Domain, Registration, HostedCountry, ResourceRecord, Search
 from domain_monitor.domainsdb_client import get_domains
 from domain_monitor import app, db
+
+import logging
+
+logger = logging.getLogger("domain_monitor.merge_task")
 
 from pprint import pprint
 
@@ -22,9 +26,38 @@ class InMemoryDimension(object):
             db.session.add(model)
         return self.dict.get(key)
 
-def load_data():
+def merge_all_data():
+    searches = Search.query.all()
+    for search in searches:
+
+        merge_data(False, search.search_string)
+        merge_data(True, search.search_string)
+
+def merge_data(is_dead, domain_search):
+
+    countries = {c_model.country_name for c_model in Country.query.all()}
     
-    results = get_domains("lava")
+    countries.add(None)
+
+    zones = {z_model.zone for z_model in Zone.query.all()}
+
+    for country in countries:
+        
+        country_result = get_domains(domain_search, country=country, is_dead=is_dead)
+        load_data(country_result)
+
+        if country_result.is_truncated:
+            for zone in zones:
+                zone_result = get_domains(domain_search, zone, country, is_dead=is_dead)
+                load_data(zone_result)
+                if zone_result.is_truncated:
+                    logger.warn(
+                        "truncated data search(%r, %r, %r, %r) len = %r", 
+                        domain_search, zone, country, is_dead , zone_result.match_count
+                    )
+    
+
+def load_data(results):
     
     # Build Zone dimension in memory
     zone_dim = InMemoryDimension(
@@ -56,7 +89,7 @@ def load_data():
             )
             db.session.add(domain_model)
         
-        pprint(domain_model.registrations)
+        logger.info("%r", domain_model.registrations)
 
         matching_registrations = [
             reg 
@@ -64,10 +97,10 @@ def load_data():
             if reg.create_date == domain.create_date
         ]
         if len(matching_registrations) > 0:
-            print("Found existing registration")
+            logger.info("Found existing registration")
             registration = matching_registrations[0]
         else:
-            print("New registration")
+            logger.info("New registration")
             registration = Registration(
                 domain=domain_model,
                 create_date=domain.create_date,
@@ -82,7 +115,7 @@ def load_data():
                 if hc.country == country
             ]
             if len(matching_hcs) > 0:
-                print("Found matching hc")
+                logger.info("Found matching hc")
             else:
                 hc = HostedCountry(country=country, registration=registration)
                 db.session.add(hc)
