@@ -17,9 +17,9 @@ For each query, we will query, both `isDead=false` and `isDead=true`, and we wil
 ## Domain removal detection
 
 There are three distinct ways in which removed domains may be identified.
-    - The domain is found in the `isDead=true` query
-    - A new registration with a new `create_date` is found.
-    - The domain no longer appears in search results.
+    - Dead: The domain is found in the `isDead=true` query. 
+    - Old: A new registration with a new `create_date` is found. 
+    - Stale: The domain no longer appears in search results. 
 
 ## Setup and execution
 
