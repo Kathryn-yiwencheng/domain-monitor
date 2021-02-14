@@ -133,6 +133,7 @@ def load_data(results, change_set=None):
             reg 
             for reg in domain_model.registrations
             if  reg.create_date == domain.create_date 
+                and (reg.removed_date is None or domain.is_dead)
         ]
         non_matching_registrations = [
             reg 
