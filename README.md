@@ -1,4 +1,4 @@
-# domain-monitor
+# Domain Monitor
 
 ## API limitation 
 
@@ -30,10 +30,13 @@ pip install -r requirements.txt
 
 Step 2: Configure database and load initial database migration
 
-Update database configuration in `application.cfg`.
+Update database configuration in `domain_monitor/config.py`.
+
 ```
 python manage.py db upgrade
 ```
+
+Alternatively, the schema may be loaded from the file `domain_monitor.sql` using the `psql` command.
 
 Step 3: Populate search queries
 ```
@@ -44,5 +47,5 @@ Step 4: Load data
 ```
 python manage.py run_merge_task
 ```
-
+Logs can be viewed in the `task.log` file which is appended to during every `merge_task` run.
 
