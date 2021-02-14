@@ -27,14 +27,36 @@ class InMemoryDimension(object):
             db.session.add(model)
         return self.dict.get(key)
 
+
+class ChangeSet(object):
+    def __init__(self):
+        self.added = []
+        self.removed = []
+
+
 def merge_all_data():
     searches = Search.query.all()
+    change_set = ChangeSet()
+
     for search in searches:
 
-        merge_data(False, search.search_string)
-        merge_data(True, search.search_string)
+        merge_data(False, search.search_string, change_set)
+        merge_data(True, search.search_string, change_set)
 
-def merge_data(is_dead, domain_search):
+    if len(change_set.added) > 0:
+        logger.info("Added %d domains", len(change_set.added))
+    else:
+        logger.info("No Domains Added")
+
+    
+    if len(change_set.removed) > 0:
+        logger.info("Removed %d domains", len(change_set.removed))
+    else:
+        logger.info("No Domains Removed")
+    
+        
+
+def merge_data(is_dead, domain_search, change_set=None):
 
     countries = {c_model.country_name for c_model in Country.query.all()}
     
@@ -45,20 +67,20 @@ def merge_data(is_dead, domain_search):
     for country in countries:
         
         country_result = get_domains(domain_search, country=country, is_dead=is_dead)
-        load_data(country_result)
+        load_data(country_result, change_set)
 
         if country_result.is_truncated:
             for zone in zones:
                 zone_result = get_domains(domain_search, zone, country, is_dead=is_dead)
-                load_data(zone_result)
+                load_data(zone_result, change_set)
                 if zone_result.is_truncated:
                     logger.warn(
-                        "truncated data search(%r, %r, %r, %r) len = %r", 
+                        "truncated data search(domain=%r, zone=%r, country=%r, isDead=%r) len = %r", 
                         domain_search, zone, country, is_dead , zone_result.match_count
                     )
     
 
-def load_data(results):
+def load_data(results, change_set=None):
     
     # Build Zone dimension in memory
     zone_dim = InMemoryDimension(
@@ -116,6 +138,9 @@ def load_data(results):
             )
             db.session.add(registration)
 
+            if change_set is not None:
+                change_set.added.append(registration)
+
         registration.last_seen_date = datetime.utcnow()
 
         # Record as dead if domain is_dead
@@ -123,6 +148,9 @@ def load_data(results):
             if registration.removed_date is None:
                 logger.info("Dead registration found: %r", domain.json_object)
                 registration.removed_date = datetime.utcnow()
+                if change_set is not None:
+                    change_set.removed.append(registration)
+
         
         registration.is_dead = domain.is_dead
         registration.update_date = domain.update_date
@@ -134,6 +162,9 @@ def load_data(results):
             if non_matching_registration.removed_date is None:
                 logger.info("Old registration found: %r", non_matching_registration)
                 non_matching_registration.removed_date = datetime.utcnow()
+                if change_set is not None:
+                    change_set.removed.append(non_matching_registration)
+
         
         if country is not None:
             matching_hcs = [
@@ -146,16 +177,6 @@ def load_data(results):
             else:
                 hc = HostedCountry(country=country, registration=registration)
                 db.session.add(hc)
-            
-    # hosted_country = {domain.hosted_country for domain in results.domains if domain.hosted_country is not None}
-    # hosted_country_models = [HostedCountry(country_name=country) for country in countries]
-    # for country_model in country_models:
-    #     db.session.add(country_model)
 
-    # registration = {domain.registration for domain in results.domains if domain.domain is not None}
-    # registration_models = [Registration(domain_name=domain) for domain in domains]
-    # for domain_model in domain_models:
-    #     db.session.add(domain_model)
-    
 
     db.session.commit()
