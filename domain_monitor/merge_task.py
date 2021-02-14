@@ -1,6 +1,7 @@
 from domain_monitor.models import Zone, Country, Domain, Registration, HostedCountry, ResourceRecord, Search
 from domain_monitor.domainsdb_client import get_domains
 from domain_monitor import app, db
+from datetime import datetime
 
 import logging
 
@@ -89,25 +90,51 @@ def load_data(results):
             )
             db.session.add(domain_model)
         
-        logger.info("%r", domain_model.registrations)
+        logger.debug("%r", domain_model.registrations)
 
         matching_registrations = [
             reg 
             for reg in domain_model.registrations
             if reg.create_date == domain.create_date
         ]
+        non_matching_registrations = [
+            reg 
+            for reg in domain_model.registrations
+            if reg.create_date != domain.create_date
+        ]
+
         if len(matching_registrations) > 0:
-            logger.info("Found existing registration")
+            logger.debug("Found existing registration")
             registration = matching_registrations[0]
         else:
-            logger.info("New registration")
+            logger.info("New registration found: %r", domain.json_object)
             registration = Registration(
                 domain=domain_model,
                 create_date=domain.create_date,
-                is_dead=domain.is_dead
+                is_dead=domain.is_dead,
+                added_date=datetime.utcnow()
             )
             db.session.add(registration)
-    
+
+        registration.last_seen_date = datetime.utcnow()
+
+        # Record as dead if domain is_dead
+        if domain.is_dead:
+            if registration.removed_date is None:
+                logger.info("Dead registration found: %r", domain.json_object)
+                registration.removed_date = datetime.utcnow()
+        
+        registration.is_dead = domain.is_dead
+        registration.update_date = domain.update_date
+        
+        
+        # If non-matching registrations exist, mark them as removed
+
+        for non_matching_registration in non_matching_registrations:
+            if non_matching_registration.removed_date is None:
+                logger.info("Old registration found: %r", non_matching_registration)
+                non_matching_registration.removed_date = datetime.utcnow()
+        
         if country is not None:
             matching_hcs = [
                 hc
@@ -115,7 +142,7 @@ def load_data(results):
                 if hc.country == country
             ]
             if len(matching_hcs) > 0:
-                logger.info("Found matching hc")
+                logger.debug("Found matching hc")
             else:
                 hc = HostedCountry(country=country, registration=registration)
                 db.session.add(hc)

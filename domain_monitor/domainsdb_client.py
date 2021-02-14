@@ -23,7 +23,7 @@ class DomainRecord(object):
 
     @property
     def is_dead(self):
-        return self.json_object['isDead']
+        return self.json_object['isDead'] == 'True'
 
     @property
     def create_date(self):
@@ -33,6 +33,16 @@ class DomainRecord(object):
             return dateutil.parser.parse(
                 self.json_object['create_date']
             )
+
+    @property
+    def update_date(self):
+        if self.json_object['update_date'] is None:
+            return None
+        else:
+            return dateutil.parser.parse(
+                self.json_object['update_date']
+            )
+
 
     @property
     def zone(self):

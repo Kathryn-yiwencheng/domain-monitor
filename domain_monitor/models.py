@@ -42,16 +42,20 @@ class Registration(db.Model):
     id = db.Column(db.Integer(), primary_key=True) # generate a id for registration
     domain_id = db.Column(db.Integer(),  db.ForeignKey("domain.id"))
 
-    is_dead = db.Column(db.String())
-    current_date = db.Column(db.String())
-
+    is_dead = db.Column(db.Boolean())
+    
     create_date = db.Column(db.DateTime())
     update_date = db.Column(db.DateTime())
-    end_date = db.Column(db.DateTime())
+
+    added_date = db.Column(db.DateTime())
+    removed_date = db.Column(db.DateTime())
+    last_seen_date = db.Column(db.DateTime()) 
 
     hosted_countries = db.relationship("HostedCountry", backref='registration')
     resource_records = db.relationship("ResourceRecord", backref='registration')
 
+    def __repr__(self):
+        return "<Registration domain=%r create_date=%r>" % (self.domain.domain_name, self.create_date)
 
 class HostedCountry(db.Model):
     __tablename__ = 'hosted_country'
