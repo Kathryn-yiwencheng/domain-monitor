@@ -1,6 +1,6 @@
 # Domain Monitor
 
-## API limitation 
+## API limitations 
 
 The primary limitation of the API is that only 50 records returned in a given query. The documentation indicates there are page and limit attributes; however, these attributes seem to be ignored.
 
@@ -14,9 +14,14 @@ We will make queries for search terms found in the `search` table.
 
 For each query, we will query, both `isDead=false` and `isDead=true`, and we will begin with searching for each known country, as well as with country omitted. After finding each country result, if the result is truncated, we will search again with zones specified. If in this case we still find truncated results, we will log a warning with the search parameters as well as the length of the truncated result set.
 
+## Data Model 
+
+![ER Diagram](Schema.png)
+
 ## Domain removal detection
 
 There are three distinct ways in which removed domains may be identified.
+    
     - Dead: The domain is found in the `isDead=true` query. 
     - Old: A new registration with a new `create_date` is found. 
     - Stale: The domain no longer appears in search results. 
