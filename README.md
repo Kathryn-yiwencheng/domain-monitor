@@ -16,7 +16,7 @@ For each query, we will query, both `isDead=false` and `isDead=true`, and we wil
 
 ## Data Model 
 
-![ER Diagram](Schema.png)
+![ER Diagram](DomainMonitorSchema.png)
 
 ## Domain removal detection
 

@@ -1,7 +1,3 @@
-
-#SQLAlchemy models country, zone, domain tables - what if domain is expired and renew by someone else. 
-#if it is expried and renew. With version number 
-
 """
 Contains all Database configuration, models and relationships.
 """
@@ -49,7 +45,7 @@ class Registration(db.Model):
 
     added_date = db.Column(db.DateTime())
     removed_date = db.Column(db.DateTime())
-    last_seen_date = db.Column(db.DateTime()) 
+    last_seen_date = db.Column(db.DateTime())
 
     hosted_countries = db.relationship("HostedCountry", backref='registration')
     resource_records = db.relationship("ResourceRecord", backref='registration')
@@ -64,6 +60,9 @@ class HostedCountry(db.Model):
     registration_id = db.Column(db.Integer(), db.ForeignKey('registration.id')) 
     country_id = db.Column(db.Integer(), db.ForeignKey('country.id'))
 
+    added_date = db.Column(db.DateTime())
+    removed_date = db.Column(db.DateTime())
+    last_seen_date = db.Column(db.DateTime())
 
 class Country(db.Model):
     __tablename__ = 'country'
@@ -90,3 +89,6 @@ class ResourceRecord(db.Model):
     priority = db.Column(db.String())
     value = db.Column(db.String())
 
+    added_date = db.Column(db.DateTime())
+    removed_date = db.Column(db.DateTime())
+    last_seen_date = db.Column(db.DateTime())
