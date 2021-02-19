@@ -2,12 +2,11 @@ from domain_monitor.models import Zone, Country, Domain, Registration, HostedCou
 from domain_monitor.domainsdb_client import get_domains
 from domain_monitor import app, db
 from datetime import datetime, timedelta
-
+from pprint import pprint
 import logging
 
 logger = logging.getLogger("domain_monitor.merge_task")
 
-from pprint import pprint
 
 class InMemoryDimension(object):
     
@@ -47,14 +46,17 @@ def remove_unseen_domains(stale_threshold=timedelta(hours=12), change_set=None):
 
     db.session.commit()
 
-def merge_all_data():
+
+def merge_all_searches():
+    """Load searches from the database and execute each"""
+    
     searches = Search.query.all()
     change_set = ChangeSet()
 
     for search in searches:
 
-        merge_data(False, search.search_string, change_set)
-        merge_data(True, search.search_string, change_set)
+        merge_search(domain_search=search.search_string, is_dead=False, change_set=change_set)
+        merge_search(domain_search=search.search_string, is_dead=True, change_set=change_set)
 
     remove_unseen_domains(change_set=change_set)
 
@@ -62,32 +64,35 @@ def merge_all_data():
         logger.info("Added %d domains", len(change_set.added))
     else:
         logger.info("No Domains Added")
-
     
     if len(change_set.removed) > 0:
         logger.info("Removed %d domains", len(change_set.removed))
     else:
         logger.info("No Domains Removed")
     
-        
 
-def merge_data(is_dead, domain_search, change_set=None):
+def merge_search(domain_search, is_dead, change_set=None):
+    """Seach domains and load into the dabase. 
 
-    countries = {c_model.country_name for c_model in Country.query.all()}
+       Execute search for each known country as well as coutnry omitted. 
+       For each result set, if it is truncated, also try searching with all known zones. 
+       To find as many as matching domains as possible. """
+
+    countries = {c_model.country_name for c_model in Country.query.all()}    
     
     countries.add(None)
-
+    
     zones = {z_model.zone for z_model in Zone.query.all()}
 
     for country in countries:
         
         country_result = get_domains(domain_search, country=country, is_dead=is_dead)
-        load_data(country_result, change_set)
+        load_domain_results(country_result, change_set)
 
         if country_result.is_truncated:
             for zone in zones:
                 zone_result = get_domains(domain_search, zone, country, is_dead=is_dead)
-                load_data(zone_result, change_set)
+                load_domain_results(zone_result, change_set)
                 if zone_result.is_truncated:
                     logger.warn(
                         "truncated data search(domain=%r, zone=%r, country=%r, isDead=%r) len = %r", 
@@ -95,7 +100,7 @@ def merge_data(is_dead, domain_search, change_set=None):
                     )
     
 
-def load_data(results, change_set=None):
+def load_domain_results(results, change_set=None):
     
     # Build Zone dimension in memory
     zone_dim = InMemoryDimension(
