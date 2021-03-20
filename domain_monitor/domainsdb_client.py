@@ -7,7 +7,8 @@ import dateutil.parser
 
 
 class DomainRecord(object):
-    
+    """Dependency : domain, country, isDead, zone, create_date, and update_date"""
+
     tld_re = re.compile(r'^[A-Za-z0-9\-\.]+\.(\w+)$')
         
     def __init__(self, json_object):
@@ -54,6 +55,7 @@ class DomainRecord(object):
     
 
 class DomainsdbResponse(object):
+    """Dependency: search if data is truncated"""
 
     def __init__(self, json_object):
         self.json_object = json_object
@@ -74,6 +76,7 @@ class DomainsdbResponse(object):
         return self.match_count != len(self.domains)
 
 def get_domains(search_domain, zone=None, country=None, is_dead=False):
+    """ get domain data from API, query country first and then zone (Is Truncated) """
 
     # Begin with base URL
     base_url = 'https://api.domainsdb.info/v1/domains/search'
@@ -125,5 +128,3 @@ if __name__ == '__main__':
         print("Domain:", domain.domain, 'update_date:', domain.json_object['update_date'])
         
     pprint(response.domains[0].json_object)
-
-# query country first and then zone (Is Truncated)

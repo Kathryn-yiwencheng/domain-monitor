@@ -9,6 +9,7 @@ logger = logging.getLogger("domain_monitor.merge_task")
 
 
 class InMemoryDimension(object):
+    """Dependency for zone_dim and country_dim"""
     
     def __init__(self, model, create_func, key_func):
         self.model = model
@@ -28,12 +29,15 @@ class InMemoryDimension(object):
 
 
 class ChangeSet(object):
+    """ dependency use for change_set in merge_all_search"""
     def __init__(self):
         self.added = []
         self.removed = []
 
 
 def remove_unseen_domains(stale_threshold=timedelta(hours=12), change_set=None):
+    """categorize domain to be unseen domain if they have a new create date"""
+
     q = (Registration.query
         .filter(Registration.last_seen_date < datetime.utcnow() - stale_threshold)
         .filter(Registration.removed_date.is_(None)))
@@ -101,7 +105,8 @@ def merge_search(domain_search, is_dead, change_set=None):
     
 
 def load_domain_results(results, change_set=None):
-    
+    """call InMemoryDimension function and build zone and country in memory"""
+
     # Build Zone dimension in memory
     zone_dim = InMemoryDimension(
         Zone, 
