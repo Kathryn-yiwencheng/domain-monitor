@@ -7,7 +7,7 @@ import dateutil.parser
 
 
 class DomainRecord(object):
-    """Dependency : domain, country, isDead, zone, create_date, and update_date"""
+    """A class for each JSON domain more friendly """
 
     tld_re = re.compile(r'^[A-Za-z0-9\-\.]+\.(\w+)$')
         
@@ -24,10 +24,12 @@ class DomainRecord(object):
 
     @property
     def is_dead(self):
+        """ String 'True' or 'False' into python boolean """
         return self.json_object['isDead'] == 'True'
 
     @property
     def create_date(self):
+        """ Make the data type more friendly - datetime object """
         if self.json_object['create_date'] is None:
             return None
         else:
@@ -37,6 +39,7 @@ class DomainRecord(object):
 
     @property
     def update_date(self):
+        """ Make the data type more friendly - datetime object """
         if self.json_object['update_date'] is None:
             return None
         else:
@@ -55,17 +58,18 @@ class DomainRecord(object):
     
 
 class DomainsdbResponse(object):
-    """Dependency: search if data is truncated"""
 
     def __init__(self, json_object):
         self.json_object = json_object
     
     @property
     def match_count(self):
+        """Find how many match counts """
         return self.json_object.get('total', 0)
     
     @property
     def domains(self):
+        """get domains as domain records objects. Convert to DomainRecord from a raw JSON  """
         return list(
                map(DomainRecord, self.json_object.get('domains', [])
             )
@@ -73,7 +77,9 @@ class DomainsdbResponse(object):
 
     @property
     def is_truncated(self):
+        """Return true if there are fewer returned domains than total matches """
         return self.match_count != len(self.domains)
+
 
 def get_domains(search_domain, zone=None, country=None, is_dead=False):
     """ get domain data from API, query country first and then zone (Is Truncated) """

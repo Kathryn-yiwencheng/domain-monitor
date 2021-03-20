@@ -35,22 +35,6 @@ class ChangeSet(object):
         self.removed = []
 
 
-def remove_unseen_domains(stale_threshold=timedelta(hours=12), change_set=None):
-    """categorize domain to be unseen domain if they have a new create date"""
-
-    q = (Registration.query
-        .filter(Registration.last_seen_date < datetime.utcnow() - stale_threshold)
-        .filter(Registration.removed_date.is_(None)))
-    stale = q.all()
-    for reg in stale:
-        logger.info("Stale registration found: %r", reg)
-        reg.removed_date = datetime.utcnow()
-        if change_set is not None:
-            change_set.removed.append(reg)
-
-    db.session.commit()
-
-
 def merge_all_searches():
     """Load searches from the database and execute each"""
     
@@ -104,8 +88,24 @@ def merge_search(domain_search, is_dead, change_set=None):
                     )
     
 
+def remove_unseen_domains(stale_threshold=timedelta(hours=12), change_set=None):
+    """categorize domain to be unseen domain if they have a new create date for merge_all_searches"""
+
+    q = (Registration.query
+        .filter(Registration.last_seen_date < datetime.utcnow() - stale_threshold)
+        .filter(Registration.removed_date.is_(None)))
+    stale = q.all()
+    for reg in stale:
+        logger.info("Stale registration found: %r", reg)
+        reg.removed_date = datetime.utcnow()
+        if change_set is not None:
+            change_set.removed.append(reg)
+
+    db.session.commit()
+    
+
 def load_domain_results(results, change_set=None):
-    """call InMemoryDimension function and build zone and country in memory"""
+    """call InMemoryDimension function and build zone and country in memory for merge_search"""
 
     # Build Zone dimension in memory
     zone_dim = InMemoryDimension(
